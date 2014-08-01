@@ -6,9 +6,6 @@ function url(path) {
     return API_URL + path;
 }
 
-function getQueryStringValue (key) {
-  return unescape(window.location.search.replace(new RegExp("^(?:.*[&\\?]" + escape(key).replace(/[\.\+\*]/g, "\\$&") + "(?:\\=([^&]*))?)?.*$", "i"), "$1"));  
-}  
 
 angular.module('vnluser')
   .controller('HomeController', ['$scope', '$http', function ($scope, $http) {
@@ -23,7 +20,6 @@ angular.module('vnluser')
 
     $http.get(url("/chk/login"), {withCredentials: true})
     .success(function(data) {
-        console.log(data);
         $scope.needslogin = false;
         $scope.loginurl = '';
         if (data.status == "forbidden") {
@@ -33,8 +29,12 @@ angular.module('vnluser')
     });
   }])
   .controller('DropboxController', ['$scope', '$http', function ($scope, $http) {
+    var params = location.search
+    $http.get(url('/auth/login' + params), {withCredentials: true})
+        .success(function() {
         window.close();
-  }]);
+    })
+  }])
     .controller('DashboardController', ['$scope', '$http',
       function ($scope, $http) {
         $scope.posts = [

@@ -5,7 +5,7 @@ angular.module('vnluser', ['ngResource', 'ngRoute', 'ui.bootstrap', 'ui.date'])
       .when('/', {
         templateUrl: 'views/home/home.html', 
         controller: 'HomeController'})
-      .when('/close_popup', {
+      .when('/dropbox_login', {
         templateUrl: 'views/home/dropbox_redirect.html', 
         controller: 'DropboxController'})
       .when('/dashboard', {
@@ -14,6 +14,6 @@ angular.module('vnluser', ['ngResource', 'ngRoute', 'ui.bootstrap', 'ui.date'])
       .when('/profile', {
         templateUrl: 'views/home/profile.html', 
         controller: 'ProfileController'})
-      .otherwise({redirectTo: '/'});
+      // .otherwise({redirectTo: '/'});
       $locationProvider.html5Mode(true);
   }]);

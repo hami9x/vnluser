@@ -20,5 +20,8 @@
 
   "background": {
     "matches": ["http://*/*","https://*/*"], "scripts": ["context-menus.js"]
-    }
+    },
+  "browser_action": {
+    "default_icon": "bigfolder16.png"
+  }
 }

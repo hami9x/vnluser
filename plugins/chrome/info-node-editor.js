@@ -16,38 +16,61 @@ jQuery.extend({
 });
 
 var check_status = false;
-var baseUrl = 'http://m.chk.vn:5000/chk/login';
+var baseUrl = 'https://m.chk.vn:5000/chk';
+var LOGIN_URL = baseUrl + '/login';
+var SAVE_URL = baseUrl + '/save';
+var logged = false;
 //var baseUrl = 'http://localhost/i2tree-framework/front-end/index.php';
 // var statusUrl = baseUrl + '/cloud_storage/check_status';
 
 function checkLogin(){
-	jQuery.get(baseUrl,{}, function(rs) {
+	jQuery.get(LOGIN_URL,{}, function(rs) {
 		if(rs.status !== 'forbidden'){
-			check_status = false;
+			// check_status = false;
+			logged = true;
 		} else {
-			check_status = true;
-			popupCenter(rs.login_url);
+			// check_status = true;
+			logged = false;
+			popupCenter(rs.login_url, function() {
+				logged = true;
+			});
 			// addInfoNode();
 		}
 	} );
 }
 checkLogin();
 
-
 chrome.extension.onRequest.addListener(
 	function(request, sender, sendResponse) {
 		{
-			jQuery('#selected_html').html(request.html);
-			jQuery('#url').html(request.url);
-			jQuery('#name').html(safeStringForName(request.title));
+			//alert(JSON.stringify(request));
+			jQuery('#selected_html').html( decodeURI(request.html) );
 			jQuery('#title').html(request.title);
 			document.title += request.title;
 			jQuery('#keywords').html(request.keywords);
+			jQuery('#url').html(request.url);
+			jQuery('#share_to_facebook').attr('href', 'https://www.facebook.com/sharer/sharer.php?u=' + request.url);
+			var h = function(arr){
+				var guessedKeywords = arr.join();
+				var ehtml = jQuery('#keywords').html().trim();
+				if(ehtml.length == 0){
+					jQuery('#keywords').html(guessedKeywords);
+				} else {
+					jQuery('#keywords').html(ehtml + "," + guessedKeywords);
+				}
+				
+			};
+			console.log(request);
+			//TODO improve tracking data
+			var trackingData = {url : request.url, referer : request.referer};
+			trackingData.title = request.title;
+			trackingData.content = request.html;
+			jQuery.getJSON("http://a.chk.vn:8888/keywords",trackingData,h);
 		}
 	}
 );
 
-function popupCenter(pageURL, w, h, top, left, nofocus) {
+function popupCenter(pageURL, w, h, top, left, nofocus, callBack) {
 	if(typeof left === 'undefined' )
 		left = (screen.width/2)-(w/2);
 	if(typeof top === 'undefined' )
@@ -59,74 +82,48 @@ function popupCenter(pageURL, w, h, top, left, nofocus) {
 	if(typeof win.focus === 'function' && !nofocus) {
 		win.focus();
 	}
+
+	win.onunload = callBack;
+
 	return win;
 }
 
 var autoPost = false;
+
 function addInfoNode(){
-	if( ! check_status ) {
-		var myWindow = popupCenter(statusUrl + '?web_login=true',960,600,50);	
-		var timer = setInterval(function(){
-			if(myWindow.closed){
-				checkLogin();
-				clearInterval(timer);
-			}
-		}, 500);
-		autoPost = true;
-		myWindow.focus();
-		return;
-	}
-	jQuery('#ajax_loader').show();
+	jQuery('#loading').show();
 	var f = function(rs){
-		jQuery('#ajax_loader').hide();
-		if( rs.indexOf('http') >= 0 ){
-			jQuery('#published_url').attr('href', rs).text( jQuery('#title').text() );		
-			window.location = rs;
-		}
+		jQuery('#loading').hide();
+		jQuery('.alert-danger').hide();
+		setTimeout(function(){
+			window.close();
+		}, 1500)
 	};
 	
-	var data = {};
-	data.html = jQuery('#selected_html').html();
-	data.name = jQuery('#name').text();
-	data.title = jQuery('#title').text();
-	data.keywords = jQuery('#keywords').text();
+	var data = {
+		content : jQuery('#selected_html').html(),
+		title : jQuery('#title').text() ? jQuery('#title').text() : '',
+		link : jQuery('#url').text() ? jQuery('#url').text() : '',
+		keywords : jQuery('#keywords').text() ? jQuery('#keywords').text()  : '',
+		share_to_other: jQuery('#share_to_other').attr('checked')
+	};
+	
+
+	if (logged) {
+		jQuery.ajax({
+			type: 'POST',
+			url: SAVE_URL,
+			data: JSON.stringify(data),
+			contentType: 'application/json',
+			dataType:'json'})
+		.done(f)
+		.fail(function() {
+			jQuery('.alert-danger').append('<p>Error connect to server. Please try later !</p>').show();
+		});
+	}
 	// jQuery.post(baseUrl + '/cloud_storage/add_info_node',data, f);
 }
 
-//unicode dumb
-var vietnameseSigns = [
-	["a","A","e","E","o","O","u","U","i","I","d","D","y","Y"],
-	["á","à","?","?","ã","â","?","?","?","?","?","a","?","?","?","?","?"],
-	["Á","À","?","?","Ã","Â","?","?","?","?","?","A","?","?","?","?","?"],
-	["é","è","?","?","?","ê","?","?","?","?","?"],
-	["É","È","?","?","?","Ê","?","?","?","?","?"],
-	["ó","ò","?","?","õ","ô","?","?","?","?","?","o","?","?","?","?","?"],
-	["Ó","Ò","?","?","Õ","Ô","?","?","?","?","?","O","?","?","?","?","?"],
-	["ú","ù","?","?","u","u","?","?","?","?","?"],
-	["Ú","Ù","?","?","U","U","?","?","?","?","?"],
-	["í","ì","?","?","i"],
-	["Í","Ì","?","?","I"],
-	["d"],
-	["Ð"],
-	["ý","?","?","?","?"],
-	["Ý","?","?","?","?"]
-];
-
-var removeSign = function(str) {
-	for (var i = 1; i < vietnameseSigns.length; i++) {
-		for (var j = 0; j < vietnameseSigns[i].length; j++){
-			str = str.replace( vietnameseSigns[i][j], vietnameseSigns[0][i - 1]);
-		}
-	}
-	return str;
-};		
-String.prototype.allTrim = String.prototype.allTrim || function(){
-	return this.split(/\-+/).join('-');
-};
-var safeStringForName = function(str){			
-	return removeSign(str).replace(/[^a-z0-9]/gi, '-').allTrim().toLowerCase();
-};
-
 jQuery(function() {
-	jQuery("#btn_save2dropbox").button().click(addInfoNode);	
+	jQuery("#btn_save2dropbox").button().click(addInfoNode);
 });
