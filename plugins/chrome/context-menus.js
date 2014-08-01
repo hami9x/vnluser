@@ -25,3 +25,6 @@ chrome.contextMenus.create(
 		});
 	}
 });
+chrome.browserAction.onClicked.addListener(function() {
+    chrome.tabs.create({'url': "https://b.chk.vn"});
+});

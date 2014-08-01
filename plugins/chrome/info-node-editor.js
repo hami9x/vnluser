@@ -16,10 +16,12 @@ jQuery.extend({
 });
 
 var check_status = false;
-var baseUrl = 'https://m.chk.vn:5000/chk';
+var baseUrl = 'http://m.chk.vn:5000/chk';
 var LOGIN_URL = baseUrl + '/login';
 var SAVE_URL = baseUrl + '/save';
 var logged = false;
+var APP_KEY = 'fsdlsyzqfzmzf05';
+var client = new Dropbox.Client({key: APP_KEY});
 //var baseUrl = 'http://localhost/i2tree-framework/front-end/index.php';
 // var statusUrl = baseUrl + '/cloud_storage/check_status';
 
@@ -60,7 +62,6 @@ chrome.extension.onRequest.addListener(
 				}
 				
 			};
-			console.log(request);
 			//TODO improve tracking data
 			var trackingData = {url : request.url, referer : request.referer};
 			trackingData.title = request.title;
@@ -99,27 +100,52 @@ function addInfoNode(){
 			window.close();
 		}, 1500)
 	};
-	
+	var keywordsArr = jQuery('#keywords').text().trim().split(',');
+	for (var i = 0; i < keywordsArr.length; i++) {
+		keywordsArr[i] = keywordsArr[i].trim();
+	}
+	var share_to_other = jQuery('#share_to_other').attr('checked')
 	var data = {
 		content : jQuery('#selected_html').html(),
 		title : jQuery('#title').text() ? jQuery('#title').text() : '',
 		link : jQuery('#url').text() ? jQuery('#url').text() : '',
-		keywords : jQuery('#keywords').text() ? jQuery('#keywords').text()  : '',
-		share_to_other: jQuery('#share_to_other').attr('checked')
+		keywords : keywordsArr.length ? keywordsArr  : []
 	};
 	
 
 	if (logged) {
-		jQuery.ajax({
-			type: 'POST',
-			url: SAVE_URL,
-			data: JSON.stringify(data),
-			contentType: 'application/json',
-			dataType:'json'})
-		.done(f)
-		.fail(function() {
-			jQuery('.alert-danger').append('<p>Error connect to server. Please try later !</p>').show();
-		});
+		if (share_to_other) {
+			jQuery.ajax({
+				type: 'POST',
+				url: SAVE_URL,
+				data: JSON.stringify(data),
+				contentType: 'application/json',
+				dataType:'json'})
+			.done(f)
+			.fail(function() {
+				jQuery('.alert-danger').append('<p>Error connect to server. Please try later !</p>').show();
+			});
+		} else {
+
+			// Try to finish OAuth authorization.
+			client.authenticate({interactive: true}, function (error) {
+			    if (error) {
+			        alert('Authentication error: ' + error);
+			    }
+			});
+
+			if (client.isAuthenticated()) {
+			    // Client is authenticated. Display UI.
+			    var datastoreManager = client.getDatastoreManager();
+					datastoreManager.openDefaultDatastore(function (error, datastore) {
+					    if (error) {
+					        alert('Error opening default datastore: ' + error);
+					    }
+					    var taskTable = datastore.getTable('h-save');
+					    var firstTask = taskTable.insert(data);
+					});
+			}
+		}
 	}
 	// jQuery.post(baseUrl + '/cloud_storage/add_info_node',data, f);
 }
