@@ -34,9 +34,7 @@ angular.module('vnluser')
         }
         $http.get("/auth/login?"+params)
             .success(function(data) {
-                localStorage.setItem({
-                    'logged': 'true'
-                });
+                localStorage.setItem('logged', 'true');
                 window.close();
             });
   }]);
