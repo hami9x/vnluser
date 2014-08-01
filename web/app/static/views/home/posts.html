@@ -1,0 +1,43 @@
+<div class="row">
+  <div class="board">
+    <div ng-include src="'views/home/tabs.html'"></div>
+    
+    <div class="tab-content">
+      <div class="tab-pane fade in active" ng-attr-id="{{ tabid }}">
+
+        <div ng-repeat="post in posts">
+          <div class="row">
+            <div class="col-md-offset-1 col-md-10">
+              <div>
+                  <strong><a ng-href="{{ post.link }}">{{ post.title }}</a></strong>
+              </div>
+              <div>     
+                    {{ post.content }}
+              </div>
+              <!--<div>
+                <p></p>
+                <a href="#">Read more</a>
+              </div>-->
+            </div>
+          </div>
+          <div class="row">
+                <div class="col-md-offset-1 col-md-10">
+                  <p></p>
+                  <p>
+                    <i class="icon-calendar"></i> 1/2/03
+                    | <i class="icon-comment"></i> <a href="#">10 Comments</a>
+                    | <i class="icon-tags"></i> Keywords:
+                    <span ng-repeat="kw in post.keywords">
+                      <a href="#"><span class="label label-info">{{ kw }}</span></a> 
+                    </span>
+                  </p>
+                </div>
+          </div>
+          <div class="row" ng-show="private">
+              <a class="btn btn-default btn-xs">Publish <i class="fa fa-share"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

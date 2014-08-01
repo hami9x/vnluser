@@ -1,0 +1,25 @@
+<div class="board-inner">
+  <ul class="nav nav-tabs" id="myTab">
+    <div class="liner"></div>
+    <li ng-class="{active: tabid == 'dashboard'}">
+      <a href="/dashboard" data-toggle="tab" title="Public Board">
+      <span class="round-tabs one">
+      <i class="glyphicon glyphicon-fire"></i>
+      </span> 
+      </a>
+    </li>
+    <li ng-class="{active: tabid == 'posts'}"><a href="/posts" data-toggle="tab" title="Your Public Posts">
+      <span class="round-tabs two">
+      <i class="glyphicon glyphicon-user"></i>
+      </span>
+      </a>
+    </li>
+    <li ng-class="{active: tabid == 'storage'}">
+      <a href="/storage" data-toggle="tab" title="Private storage">
+      <span class="round-tabs three">
+      <i class="fa fa-dropbox"></i>
+      </span>
+      </a>
+    </li>
+  </ul>
+</div>
