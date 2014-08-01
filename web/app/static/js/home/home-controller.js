@@ -1,10 +1,14 @@
 'use strict';
 
-var API_URL = 'http://m.chk.vn:5000';
+var API_URL = 'https://m.chk.vn:5000';
 
 function url(path) {
     return API_URL + path;
 }
+
+function getQueryStringValue (key) {
+  return unescape(window.location.search.replace(new RegExp("^(?:.*[&\\?]" + escape(key).replace(/[\.\+\*]/g, "\\$&") + "(?:\\=([^&]*))?)?.*$", "i"), "$1"));  
+}  
 
 angular.module('vnluser')
   .controller('HomeController', ['$scope', '$http', function ($scope, $http) {
@@ -17,7 +21,9 @@ angular.module('vnluser')
         popup.onunload = popupClose;
     }
 
-    $http.get(url("/chk/login")).success(function(data) {
+    $http.get(url("/chk/login"), {withCredentials: true})
+    .success(function(data) {
+        console.log(data);
         $scope.needslogin = false;
         $scope.loginurl = '';
         if (data.status == "forbidden") {
@@ -26,17 +32,27 @@ angular.module('vnluser')
         }
     });
   }])
-  .controller('DropboxController', ['$scope', '$http', '$location', function ($scope, $http, $location) {
-        var params = "";
-        var paramsd = $location.search();
+  .controller('DropboxController', ['$scope', '$http', function ($scope, $http) {
+        /*var params = "";
+        var paramsd = location.search;
+        var i = 0;
         for (var param in paramsd) {
-            params += "&"+ param +"="+params[param];
+            if (i > 0) {
+                params += "&"+ param +"="+ encodeURIComponent(paramsd[param]);
+            } else {
+                params += param + "=" + encodeURIComponent(paramsd[param]);
+            }
+            i++;
         }
-        $http.get("/auth/login?"+params)
+
+        $http.get(url("/auth/login" + paramsd))
             .success(function(data) {
-                localStorage.setItem({
-                    'logged': 'true'
-                });
-                window.close();
-            });
+                localStorage.setItem('logged', 'true');
+                // window.close();
+            });*/
+        window.close();
   }]);
+
+var chk_call = function(rs) {
+        console.log(rs);
+    }

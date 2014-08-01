@@ -1,0 +1,24 @@
+{
+  "manifest_version": 2,
+
+  "name": "Vnluser",
+  "description": "This extension demonstrates a browser action with Vnluser Server",
+  "version": "1.0",
+
+  "permissions": ["background" , "tabs", "unlimitedStorage", "http://*/*", "contextMenus", "cookies", "debugger", "webRequest", "clipboardRead", "clipboardWrite", "history", "notifications"],
+  "content_scripts": [
+    {
+      "matches": ["http://*/*","https://*/*"],
+      "js": ["jquery.min.js","vnluserUtil.js"]
+  }],
+
+  "icons": {
+    "16": "bigfolder16.png",
+    "48": "bigfolder48.png",
+    "128": "bigfolder128.png"
+  },
+
+  "background": {
+    "matches": ["http://*/*","https://*/*"], "scripts": ["context-menus.js"]
+    }
+}
