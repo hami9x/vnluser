@@ -26,15 +26,30 @@ angular.module('vnluser')
         }
     });
   }])
-  .controller('DropboxController', ['$scope', '$http', '$location', function ($scope, $http, $location) {
+    .controller('DropboxController', ['$scope', '$http', '$location',
+    function ($scope, $http, $location) {
         var params = "";
         var paramsd = $location.search();
         for (var param in paramsd) {
-            params += "&"+ param +"="+params[param];
+            params += "&"+ param +"="+paramsd[param];
         }
         $http.get("/auth/login?"+params)
             .success(function(data) {
                 localStorage.setItem('logged', 'true');
                 window.close();
             });
-  }]);
+  }])
+    .controller('DashboardController', ['$scope', '$http',
+      function ($scope, $http) {
+        var updates = [
+            {
+                name: 'Mr. A',
+                content: 'Sed ut perspiciatis unde omnis iste natus.'
+            },
+            {
+                name: 'Mr. A',
+                content: 'ullam corporis suscipit laboriosam'
+            },
+        ]
+      }
+    ]);

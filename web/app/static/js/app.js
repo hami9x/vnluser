@@ -8,6 +8,9 @@ angular.module('vnluser', ['ngResource', 'ngRoute', 'ui.bootstrap', 'ui.date'])
       .when('/dropbox_login', {
         templateUrl: 'views/home/dropbox_redirect.html', 
         controller: 'DropboxController'})
+      .when('/dashboard', {
+        templateUrl: 'views/home/dashboard.html', 
+        controller: 'DashboardController'})
       .otherwise({redirectTo: '/'});
       $locationProvider.html5Mode(true);
   }]);
