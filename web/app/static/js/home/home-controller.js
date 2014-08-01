@@ -41,14 +41,28 @@ angular.module('vnluser')
   }])
     .controller('DashboardController', ['$scope', '$http',
       function ($scope, $http) {
-        var updates = [
+        $scope.posts = [
             {
-                name: 'Mr. A',
-                content: 'Sed ut perspiciatis unde omnis iste natus.'
+                username: 'Hai Thanh Nguyen',
+                title: 'Some title',
+                content: 'Sed ut perspiciatis unde omnis iste natus.',
+                keywords: ['wade.go', 'programming'],
+                ncomments: 100,
+                date: "1/4/2014",
             },
+        ]
+      }
+    ])
+    .controller('ProfileController', ['$scope', '$http',
+      function ($scope, $http) {
+        $scope.posts = [
             {
-                name: 'Mr. A',
-                content: 'ullam corporis suscipit laboriosam'
+                username: 'Le Kien Truc',
+                title: 'Some title',
+                content: 'zzzzzzzzzzzzzzzzzz',
+                keywords: ['programming', 'SocialMedia'],
+                ncomments: 10,
+                date: "1/3/2014",
             },
         ]
       }

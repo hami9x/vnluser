@@ -11,6 +11,9 @@ angular.module('vnluser', ['ngResource', 'ngRoute', 'ui.bootstrap', 'ui.date'])
       .when('/dashboard', {
         templateUrl: 'views/home/dashboard.html', 
         controller: 'DashboardController'})
+      .when('/profile', {
+        templateUrl: 'views/home/profile.html', 
+        controller: 'ProfileController'})
       .otherwise({redirectTo: '/'});
       $locationProvider.html5Mode(true);
   }]);

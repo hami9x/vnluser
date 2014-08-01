@@ -1,0 +1,71 @@
+<section style="background:#efefe9;">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="board">
+        <!-- <h2>Welcome to IGHALO!<sup>™</sup></h2>-->
+        <div class="board-inner">
+          <ul class="nav nav-tabs" id="myTab">
+            <div class="liner"></div>
+            <li class="active">
+              <a href="/dashboard" data-toggle="tab" title="Public Board">
+              <span class="round-tabs one">
+              <i class="glyphicon glyphicon-fire"></i>
+              </span> 
+              </a>
+            </li>
+            <li><a href="/profile" data-toggle="tab" title="Your Profile">
+              <span class="round-tabs two">
+              <i class="glyphicon glyphicon-user"></i>
+              </span> 
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div class="tab-content">
+          <div class="tab-pane fade in active" id="public">
+            <div ng-repeat="post in posts">
+              <div class="row">
+                <div class="col-md-offset-1 col-md-1">
+                  <div class="row">
+                    {{ post.username }}
+                  </div>
+                  <div class="row">
+                    <img src="/images/avatar.jpg" width="50" height="50">
+                  </div>
+                </div>
+                <div class="col-md-9">
+                  <div>
+                      <strong><a href="#">{{ post.title }}</a></strong>
+                  </div>
+                  <div>     
+                        {{ post.content }}
+                  </div>
+                  <div>
+                    <p></p>
+                    <a href="#">Read more</a>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-offset-1 col-md-1">
+                </div>
+                <div class="col-md-9">
+                  <p></p>
+                  <p>
+                    <i class="icon-calendar"></i> {{ post.date }}
+                    | <i class="icon-comment"></i> <a href="#">{{ ncomments }} Comments</a>
+                    | <i class="icon-tags"></i> Keywords:
+                    <span ng-repeat="kw in post.keywords">
+                    <a href="#"><span class="label label-info">{{ kw }}</span></a> 
+                    </span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="clearfix"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
