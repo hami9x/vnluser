@@ -21,3 +21,4 @@ HackathonVietnam2014 contest
 Please refer installation in each component folder.
 
 == Documentation and ideas:
+https://github.com/phaikawl/vnluser/wiki
