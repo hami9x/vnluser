@@ -1,0 +1,9 @@
+.DS_Store
+*.db
+*.pyc
+*.swp
+*~
+db_repository
+flask
+web/node_modules
+web/app/static/lib
