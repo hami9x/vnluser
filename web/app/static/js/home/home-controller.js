@@ -1,6 +1,6 @@
 'use strict';
 
-var API_URL = 'https://m.chk.vn:5000';
+var API_URL = 'http://m.chk.vn:5000';
 
 function url(path) {
     return API_URL + path;

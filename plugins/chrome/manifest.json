@@ -5,7 +5,7 @@
   "description": "This extension demonstrates a browser action with Vnluser Server",
   "version": "1.0",
 
-  "permissions": ["background" , "tabs", "unlimitedStorage", "http://*/*", "contextMenus", "cookies", "debugger", "webRequest", "clipboardRead", "clipboardWrite", "history", "notifications"],
+  "permissions": ["background" , "tabs", "unlimitedStorage", "http://*/*", "contextMenus", "cookies", "debugger", "webRequest", "clipboardRead", "clipboardWrite", "history", "notifications", "storage"],
   "content_scripts": [
     {
       "matches": ["http://*/*","https://*/*"],
