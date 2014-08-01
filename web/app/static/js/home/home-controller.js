@@ -33,26 +33,33 @@ angular.module('vnluser')
     });
   }])
   .controller('DropboxController', ['$scope', '$http', function ($scope, $http) {
-        /*var params = "";
-        var paramsd = location.search;
-        var i = 0;
-        for (var param in paramsd) {
-            if (i > 0) {
-                params += "&"+ param +"="+ encodeURIComponent(paramsd[param]);
-            } else {
-                params += param + "=" + encodeURIComponent(paramsd[param]);
-            }
-            i++;
-        }
-
-        $http.get(url("/auth/login" + paramsd))
-            .success(function(data) {
-                localStorage.setItem('logged', 'true');
-                // window.close();
-            });*/
         window.close();
   }]);
-
-var chk_call = function(rs) {
-        console.log(rs);
-    }
+    .controller('DashboardController', ['$scope', '$http',
+      function ($scope, $http) {
+        $scope.posts = [
+            {
+                username: 'Hai Thanh Nguyen',
+                title: 'Some title',
+                content: 'Sed ut perspiciatis unde omnis iste natus.',
+                keywords: ['wade.go', 'programming'],
+                ncomments: 100,
+                date: "1/4/2014",
+            },
+        ]
+      }
+    ])
+    .controller('ProfileController', ['$scope', '$http',
+      function ($scope, $http) {
+        $scope.posts = [
+            {
+                username: 'Le Kien Truc',
+                title: 'Some title',
+                content: 'zzzzzzzzzzzzzzzzzz',
+                keywords: ['programming', 'SocialMedia'],
+                ncomments: 10,
+                date: "1/3/2014",
+            },
+        ]
+      }
+    ]);
