@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" >
+  <title>HashTag-</title>
+  
+  <link rel="stylesheet"  href="jquery-ui.css" type="text/css" media="all" />
+  <style type="text/css">
+    body {  font-size: 98.5%; }   
+    body {  font-family: "Trebuchet MS", "Helvetica", "Arial", "Verdana", "sans-serif"; }
+    #selected_html { margin: 10px 0px;   }
+    #selected_html > .record {  padding: 10px;  }
+    #selected_html > .record:HOVER { background: #F5DA81; color: #0404B4; }
+    div[contenteditable] {
+      border: 1px dotted #737CA1; 
+      padding: 5px;
+    }
+    div[contenteditable]:HOVER {
+      border: 1px solid #F5DA81;
+    }
+    #main_form {border: 1px dotted #737CA1; padding: 20px;}   
+  </style>
+  <script src="jquery.min.js"></script>
+  <script src="jquery-ui.min.js"></script>
+</head>
+<body>
+  <img src="bigfolder48.png" /><br>
+  
+  <div id="main_form" >
+    <a href="#" id="published_url"  ></a>
+    <strong title="">Url</strong>
+    <div id="url" contenteditable="true"></div>
+    <strong title="Useful when you search this node">Friendly File Name:</strong>
+    <div id="name" contenteditable="true"></div>
+    <strong>Title:</strong>
+    <div id="title" contenteditable="true"></div>
+    <strong>Keywords:</strong>
+    <div id="keywords" contenteditable="true"></div>
+    <div style="margin: 8px 0" >
+      <img id="ajax_loader" style="display:none;" src="images/54640843-ajax-style-loading-gif-animation.gif" />
+      <button class="btn btn-primary" id="btn_save2dropbox" >Save to my Dropbox</button>
+    </div>
+  </div>  
+  
+  <div id="selected_html" contenteditable="true"></div>
+  
+</body>
+<script src="info-node-editor.js"></script>
+</html>
