@@ -24,6 +24,7 @@ R_ITEMS             = "items"
 R_USER              = "user"
 R_POST              = "post"
 R_ZUSER             = "zuser"
+R_PUBLIC_POST       = "public_post"
 
 def get_auth_flow():
     redirect_uri = "https://st.chk.vn/dropbox_login"
@@ -66,12 +67,6 @@ def create_file(req_json):
     tf.write(json.dumps(req_json))
     return tf
 
-#TODO: remove after development
-@app.route("/chk/test", methods=['POST'])
-def chk_test():
-    req_json = request.get_json(force=True)
-    return jd(req_json)
-    
 @app.route("/chk/save", methods=['POST'])
 def chk_save():
     if "access_token" not in session: 
@@ -92,10 +87,20 @@ def chk_save():
     link = req_json["link"]
     user_id = session["db_user_id"]
     stored_json = {"post_id": post_id, "title":title, "keywords":keywords, "dp_link": dp_link, "link": link}
+    #Queue, will be replaced by kafka
     r.lpush(R_ITEMS, json.dumps(stored_json))
+    
+    #Latest 100 posts
+    r.lpush(R_PUBLIC_POST, json.dumps(stored_json))
+    r.ltrim(R_PUBLIC_POST, 0, 5000)
+    
+    #Store user posts 
     r.hset(R_USER + ":" + str(user_id),  R_POST + ":" + str(post_id), json.dumps(stored_json))
+    #Store sorted set of post_id
     r.zadd(R_ZUSER + ":" + str(user_id), str(post_id), str(post_id))
     return jd({"status":"succeed"})
+
+
 
 @app.route("/auth/login")
 def auth_login():
@@ -106,7 +111,7 @@ def auth_login():
     else:
         session["access_token"] = access_token
         session["db_user_id"] = user_id
-        return jd({"status":"login_succeed","url_state":url_state,"user_id":user_id})
+        return jd({"status":"login_succeed","url_state":url_state,"user_id":user_id,"access_token":access_token})
 
 @app.route("/auth/logout")
 def auth_logout():
@@ -115,8 +120,8 @@ def auth_logout():
 
 @app.route("/lists/post")
 def lists_post():
-    limit = 10
-    offset = 0
+    limit = request.args.get('limit') if request.args.get('limit') else 10
+    offset = request.args.get('offset') if request.args.get('offset') else 0
     r = get_redis()
     list_post = r.zrevrangebyscore(R_ZUSER + ":" + session["db_user_id"], "+inf", "-inf", start=offset, num=limit)
     res = []
@@ -124,14 +129,36 @@ def lists_post():
     for post_id in list_post:
         res.append(json.loads(r.hget(R_USER + ":" + str(session["db_user_id"]), R_POST + ":" + str(post_id))))
     return jd(res)
+
+@app.route("/lists/public_post")
+def lists_public():
+    limit = request.args.get('limit') if request.args.get('limit') else 10
+    offset = request.args.get('offset') if request.args.get('offset') else 0
+    r = get_redis()
+    list_post = r.lrange(R_PUBLIC_POST, offset, limit)
+    res = []
+    r = get_redis()
+    for post in list_post:
+        res.append(json.loads(post))
+    return jd(res)
+
+@app.route("/lists/recommendation")
+def lists_recommendation():
+    limit = 10
+    offset = 0
+    r = get_redis()
+    #TODO: Get recommendation
+    #list_recommendation = r.zrevrangebyscore(R_ZUSER + ":" + session["db_user_id"], "+inf", "-inf", start=offset, num=limit)
+    res = []
+    #r = get_redis()
+    #for post_id in list_recommendation:
+    #    res.append(json.loads(r.hget(R_USER + ":" + str(session["db_user_id"]), R_POST + ":" + str(post_id))))
+    return jd(res)
 """
 @app.route("lists/hashtag")
 @app.route("lists/subscribe")
 @app.route("favorities/create")
-@app.route("lists/recommendation")
 """
-
-#api.add_resource(HelloWorld, '/')
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True, ssl_context="adhoc")
