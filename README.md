@@ -3,7 +3,7 @@ vnluser
 HackathonVietnam2014 contest
 =======
 
-== Project is 4 main components:
+== Project is 4 main components (self written in challenge):
 - Web interface, built from AngularJS
 - Browser exenstion for Chrome PC, to be supported Firefox Android
 - Service API, built from flask (python micro-framework)
