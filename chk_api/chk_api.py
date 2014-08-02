@@ -1,10 +1,8 @@
 # hackathonvietnam2014 - team: vnluser
 # author: Truc Le
 from flask import * 
-from flask.ext import restful
 import dropbox
 from unidecode import unidecode
-import tempfile
 import StringIO
 import json
 import redis
@@ -14,19 +12,28 @@ app = Flask(__name__)
 
 
 #TODO: add configuration layer for secret data
+"""
+start configuration
+"""
 DROPBOX_APP_KEY     = "fsdlsyzqfzmzf05"
 DROPBOX_APP_SECRET  = "d3u1ulosx8k2lfe"
 app.secret_key      = "asd232x12ka5s12"
 BACKEND_API         = "b.chk.vn"
+FRONTEND_SERVER     = "st.chk.vn"
 R_POST_ID           = "post_id"
 R_ITEMS             = "items"
 R_USER              = "user"
 R_POST              = "post"
 R_ZUSER             = "zuser"
 R_PUBLIC_POST       = "public_post"
+R_RECOMMEND         = "recommend"
+"""
+end configuration
+"""
+
 
 def get_auth_flow():
-    redirect_uri = "https://st.chk.vn/dropbox_login"
+    redirect_uri = "https://" + FRONTEND_SERVER + "/dropbox_login"
     return dropbox.client.DropboxOAuth2Flow(DROPBOX_APP_KEY, DROPBOX_APP_SECRET, redirect_uri, 
         session, "dropbox-auth-csrf-token")
 
@@ -82,7 +89,7 @@ Save posts into redis and data structure
 If post is private, won't send it to data processing
 If post is public get dropbox share link back and saved to public place.
 """
-@app.route("/chk/save", methods=['POST'])
+@app.route("/chk/save", methods=['POST','OPTIONS'])
 def chk_save():
     if "access_token" not in session: 
         return check_login()
@@ -118,9 +125,9 @@ def chk_save():
         #Analytics queue, will be replaced by kafka
         r.lpush(R_ITEMS, json.dumps(stored_json))
         
-        #Latest 100 posts
+        #Save latest 100 posts
         r.lpush(R_PUBLIC_POST, json.dumps(stored_json))
-        r.ltrim(R_PUBLIC_POST, 0, 5000)
+        r.ltrim(R_PUBLIC_POST, 0, 100)
     return jd({"status":"succeed"})
 
 
@@ -190,18 +197,31 @@ def lists_recommendation():
     limit = 10
     offset = 0
     r = get_redis()
-    #TODO: Get recommendation
-    #list_recommendation = r.zrevrangebyscore(R_ZUSER + ":" + session["db_user_id"], "+inf", "-inf", start=offset, num=limit)
+    list_recommendation = r.zrevrangebyscore(R_RECOMMEND + ":" + session["db_user_id"], "+inf", "-inf", start=offset, num=limit*2)
+    if limit > len(list_recommendation):
+        limit = len(list_recommendation)
+    import random
+    list_recommendation = random.sample(list_recommendation, limit)
     res = []
-    #r = get_redis()
-    #for post_id in list_recommendation:
-    #    res.append(json.loads(r.hget(R_USER + ":" + str(session["db_user_id"]), R_POST + ":" + str(post_id))))
+    for recommend in list_recommendation:
+        rec = r.hget(recommend.split(" ")[0],recommend.split(" ")[1])
+        if rec is None:
+            continue 
+        if recommend.split(" ")[0].split(":")[1] == session["db_user_id"]:
+            continue
+        
+        else:
+            res.append(json.loads(rec))
     return jd(res)
 """
-@app.route("lists/hashtag")
-@app.route("lists/subscribe")
-@app.route("favorities/create")
+@app.route("/lists/hashtag")
+@app.route("/lists/subscribe")
+@app.route("/favorities/create")
 """
 
+"""
+Start server.
+TODO: Disable debug in production mode
+"""
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True)
