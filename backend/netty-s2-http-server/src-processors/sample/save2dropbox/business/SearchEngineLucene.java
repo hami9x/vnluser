@@ -86,11 +86,6 @@ public class SearchEngineLucene {
 			for (Item item : items) {
 				addUserWithKeyword(w, item);
 			}
-			addUserWithKeyword(w,new Item(1, "chrome , firefox", "http:/111", "item 1", "http:/111", 1));
-			addUserWithKeyword(w,new Item(2, "chrome , explorer", "http:/111", "item 2", "http:/111", 1));
-			addUserWithKeyword(w,new Item(3, "Android , explorer", "http:/111", "item 3", "http:/111", 2));
-			addUserWithKeyword(w,new Item(4, "firefox , safari", "http:/111", "item 4", "http:/111", 2));
-			
 			w.commit();
 			w.close();			
 			

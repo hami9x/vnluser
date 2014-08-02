@@ -82,12 +82,6 @@ public class UserRecommender {
 			} catch (Exception e) {	}
 		});
 		//System.out.println(userKeywordStats);
-//		userKeywordStats.put("a", 2);
-//		userKeywordStats.put("Apple", 3);
-//		userKeywordStats.put("IBM", 1);
-//		userKeywordStats.put("Google", 23);
-//		userKeywordStats.put("Facebook", 5);
-//		userKeywordStats.put("Dell", 3);
 		
 		int top = 5;
 		SortedSet<Entry<String, Integer>> sortedset = entriesSortedByValues(userKeywordStats);
