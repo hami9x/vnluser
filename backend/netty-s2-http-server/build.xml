@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="compile-http-server" name="rfx-s2-http-server">	
+	<!--ANT 1.7 is required -->
+	
+	<!--load common properties -->
+	<loadproperties srcFile="build.properties"/>
+	
+	<!-- set global properties for this build -->	
+	<property name="dist" location="" />	
+	
+	<property name="src_core" location="src-core" />
+	<property name="src_processors" location="src-processors" />
+	
+	<property name="build" location="build" />		
+	<property name="lib" location="lib" />
+	<property name="configs" location="configs" />
+	<property name="static" location="static" />
+	<property name="script" location="script" />
+	<property name="exclude_pattern_folder" value="**/test/*" />
+
+	<property name="class_path_for_server" value=" . ;
+		lib/antlr4-runtime-4.3.jar ; 
+		lib/aopalliance.jar ; 
+		lib/aspectjrt-1.8.1.jar ; 
+		lib/aspectjweaver-1.8.1.jar ; 
+		lib/async-http-client-1.8.11.jar ; 
+		lib/boilerpipe-1.2.0.jar ; 
+		lib/closure-compiler.jar ; 
+		lib/common-pherialize-1.1.jar ; 
+		lib/commons-cli-1.2.jar ; 
+		lib/commons-codec-1.6.jar ; 
+		lib/commons-configuration-1.10.jar ; 
+		lib/commons-dbcp-1.4.jar ; 
+		lib/commons-io-1.4.jar ; 
+		lib/commons-lang3-3.3.2.jar ; 
+		lib/commons-logging-1.1.3.jar ; 
+		lib/commons-net-3.2.jar ; 
+		lib/commons-pool-1.6.jar ; 
+		lib/commons-pool2-2.2.jar ; 
+		lib/contiperf-2.3.2.jar ; 
+		lib/crawler/twitter-text-1.6.1.jar ; 
+		lib/crawler/twitter4j-core-3.0.2.jar ; 
+		lib/crawler/twitter4j-stream-3.0.2.jar ; 
+		lib/disruptor-3.2.1.jar ; 
+		lib/groovy-all-2.3.3-indy.jar ; 
+		lib/gson-2.2.4.jar ; 
+		lib/guava-17.0.jar ; 
+		lib/hamcrest-core-1.3.jar ; 
+		lib/handlebars-1.3.1.jar ; 
+		lib/httpclient-4.3.3.jar ; 
+		lib/httpclient-cache-4.3.3.jar ; 
+		lib/httpcore-4.3.2.jar ; 
+		lib/httpmime-4.3.3.jar ; 
+		lib/javassist-3.12.1.GA.jar ; 
+		lib/javax.inject.jar ; 
+		lib/je-5.0.84.jar ; 
+		lib/jedis-2.5.1.jar ; 
+		lib/jopt-simple-3.2.jar ; 
+		lib/jsoup-1.7.3.jar ; 
+		lib/junit-4.11.jar ; 
+		lib/kafka_2.9.2-0.8.1.1.jar ; 
+		lib/log4j-1.2.17.jar ; 
+		lib/lucene/lucene-analyzers-common-4.7.0.jar ; 
+		lib/lucene/lucene-classification-4.7.0.jar ; 
+		lib/lucene/lucene-codecs-4.7.0.jar ; 
+		lib/lucene/lucene-core-4.7.0.jar ; 
+		lib/lucene/lucene-facet-4.7.0.jar ; 
+		lib/lucene/lucene-grouping-4.7.0.jar ; 
+		lib/lucene/lucene-highlighter-4.7.0.jar ; 
+		lib/lucene/lucene-join-4.7.0.jar ; 
+		lib/lucene/lucene-memory-4.7.0.jar ; 
+		lib/lucene/lucene-queryparser-4.7.0.jar ; 
+		lib/lucene/lucene-spatial-4.7.0.jar ; 
+		lib/lucene/lucene-suggest-4.7.0.jar ; 
+		lib/lucene/spatial4j-0.4.1.jar ; 
+		lib/metrics-annotation-3.0.0-c0c8be71.jar ; 
+		lib/metrics-core-2.2.0.jar ; 
+		lib/mustache-0.8.15.jar ; 
+		lib/mysql-connector-java-5.1.31-bin.jar ; 
+		lib/nekohtml-1.9.13.jar ; 
+		lib/netty-all-4.0.21.Final.jar ; 
+		lib/reflections-0.9.9-RC1.jar ; 
+		lib/rxjava-core-0.19.2.jar ; 
+		lib/scala-library-2.9.2.jar ; 
+		lib/scribelog/libfb303.jar ; 
+		lib/scribelog/libthrift.jar ; 
+		lib/scribelog/scribe-java.jar ; 
+		lib/slf4j-api-1.7.7.jar ; 
+		lib/slf4j-simple-1.7.7.jar ; 
+		lib/snakeyaml-1.9.jar ; 
+		lib/snappy-java-1.0.5.jar ; 
+		lib/springframework/spring-aop-4.0.5.RELEASE.jar ; 
+		lib/springframework/spring-beans-4.0.5.RELEASE.jar ; 
+		lib/springframework/spring-context-4.0.5.RELEASE.jar ; 
+		lib/springframework/spring-core-4.0.5.RELEASE.jar ; 
+		lib/springframework/spring-expression-4.0.5.RELEASE.jar ; 
+		lib/springframework/spring-jdbc-4.0.5.RELEASE.jar ; 
+		lib/springframework/spring-tx-4.0.5.RELEASE.jar ; 
+		lib/spymemcached-2.11.3.jar ; 
+		lib/xerces-2.9.1.jar ; 
+		lib/zkclient-0.3.jar ; 
+		lib/zookeeper-3.3.4.jar ;     
+	" />
+	
+	<target name="init">
+		<!-- Create the time stamp -->
+		<tstamp />
+		<!-- Create the build directory structure used by compile -->
+		<mkdir dir="${build}" />
+	</target>
+
+	<path id="jars">
+		<fileset dir="${lib}" includes="**/*.jar" excludes="**/.svn/*" />
+	</path>
+
+	<target name="compile-src" depends="init" description="compile the source ">
+		<!-- Compile src_core -->
+		<javac srcdir="${src_core}" destdir="${build}" classpathref="jars" debug="on" encoding="utf-8" optimize="on" 
+			target="1.8" includeantruntime="true" fork="yes"	executable="${javac_path}" compiler="javac1.8" />
+		
+		<!-- Compile src_processors -->
+		<javac srcdir="${src_processors}" destdir="${build}" classpathref="jars" debug="on" encoding="utf-8" optimize="on" 
+					target="1.8" includeantruntime="true" fork="yes"	executable="${javac_path}" compiler="javac1.8" />		
+		<fileset dir="bin">
+			<exclude name="**/.svn/*" />
+			<exclude name="${exclude_pattern_folder}" />
+		</fileset>
+	</target>
+
+
+	<target name="clean" description="clean up">
+		<!-- Delete the ${build} and ${dist} directory trees -->
+		<delete dir="${build}" />
+		<delete dir="${dist}" />
+	</target>
+
+	
+	<target name="compile-http-server" depends="compile-src" description="http-log-server BUILD">
+		<!--
+		<copy todir="${dist}/lib">
+			<fileset dir="${lib}" includes="**" excludes="**/.svn/*" />
+		</copy>
+		<copy todir="${dist}/configs">
+			<fileset dir="${configs}" includes="**" excludes="**/.svn/*" />
+		</copy>
+		<copy todir="${dist}/static">
+			<fileset dir="${static}" includes="**">
+				<exclude name="**/.svn/*" />
+				<exclude name="**/src/" />
+			</fileset>
+		</copy>
+		<copy todir="${dist}/script">
+			<fileset dir="${script}" includes="**.groovy">
+				<exclude name="**/.svn/*" />
+				<exclude name="**/src/" />
+			</fileset>
+		</copy>
+		-->
+		
+		<!-- http server jar -->
+		<delete file="${dist}/http-server.jar" />
+		<jar jarfile="${dist}/http-server.jar" basedir="${build}" filesetmanifest="mergewithoutmain">
+			<manifest>
+				<attribute name="Main-Class" value="rfx.server.http.HttpServerStarter" />
+				<attribute name="Class-Path" value="${class_path_for_server}" />
+			</manifest>
+			<fileset dir="${build}">
+				<exclude name="**/.svn/*" />
+				<exclude name="${exclude_pattern_folder}" />
+			</fileset>
+		</jar>
+		
+		<!-- schedule job jar -->
+		<delete file="${dist}/recommender-job.jar" />
+		<jar jarfile="${dist}/recommender-job.jar" basedir="${build}" filesetmanifest="mergewithoutmain">
+			<manifest>
+				<attribute name="Main-Class" value="sample.save2dropbox.business.UserRecommender" />
+				<attribute name="Class-Path" value="${class_path_for_server}" />
+			</manifest>
+			<fileset dir="${build}">
+				<exclude name="**/.svn/*" />
+				<exclude name="${exclude_pattern_folder}" />
+			</fileset>
+		</jar>
+		
+		<delete dir="${build}" />
+	</target>
+	
+
+</project>

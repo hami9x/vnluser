@@ -20,6 +20,23 @@ https://github.com/phaikawl/vnluser/wiki
 - Service API, built from flask (python micro-framework)
 - Data processing backend: python (NLP keywords suggest) + java (Recommendation)
 
+
+## Implementaion
+- Nguyen Thanh Hai:
+Angular view template render: 
+https://github.com/phaikawl/vnluser/tree/master/web/app/static/views/home
+Home controller for web static view: https://github.com/phaikawl/vnluser/blob/master/web/app/static/js/home/home-controller.js
+- Nguyen Van Hon:
+Chrome extension (main files)
+https://github.com/phaikawl/vnluser/blob/master/plugins/chrome/info-node-editor.js
+https://github.com/phaikawl/vnluser/blob/master/plugins/chrome/info-node-editor.html
+- Le Kien Truc:
+API, dropbox authenticate, uploading, redis push to backend analytics: https://github.com/phaikawl/vnluser/blob/master/chk_api/chk_api.py
+
+- Nguyen Tan Trieu:
+Keywords suggestion (NLP)
+https://github.com/phaikawl/vnluser/blob/master/backend/keywords.py
+
 # Other services:
 
 - Dropbox: User authentication + User data storage + Meta data.

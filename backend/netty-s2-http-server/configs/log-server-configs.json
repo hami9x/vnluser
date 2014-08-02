@@ -1,0 +1,27 @@
+{
+    ip: "*",
+    port : 9090,
+    websocketEnable : 0,
+    
+    cacheHttpMaxAge : 1800,
+    accessLogEnable : 0,
+    writeKafkaLogEnable : 1,
+    accessLogFileName : "access.log",
+    debugLogFolderPath : "./log",
+    debugModeEnabled : 1,
+    timeSendKafkaPerBatchJob: 8000,
+	sendKafkaThreadPerBatchJob: 1,
+    kafkaProducerAsyncEnabled : 0,
+    kafkaProducerAckEnabled : 1,
+    numberBatchJob : 1,
+    secretKey: "13243424",
+    cookieDomain: ".example.com",
+        
+    defaultLogHandlerClassPath : "rfx.server.log.handlers.UserActivityLogHandler",
+    defaultPartitioner: "rfx.server.log.kafka.SimplePartitioner",
+    kafkaProducerList: {
+    	kafka-social-activity-Producer : {
+            brokerList : "127.0.0.1:9092", kafkaTopic: "item-tracking" 
+        }	
+    }
+}

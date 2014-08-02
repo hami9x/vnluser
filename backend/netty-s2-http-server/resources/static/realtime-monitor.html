@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eclick Real-time Monitor</title>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+
+<style type="text/css">
+* {
+	margin: 0;
+	padding: 0;
+}
+
+.monitor {
+	padding: 5px;
+	background-color: #808080;
+	color: #00FF00;
+}
+
+h3 {
+	font-size: 24px;
+	margin-top: 20px;
+	margin-bottom: 10px;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-weight: 500;
+	line-height: 1.1;
+	color: inherit;
+}
+
+ol.timeline {
+	list-style: none;
+	font-size: 1.2em;
+}
+
+ol.timeline li {
+	display: none;
+	position: relative;
+	padding: .7em 0 .6em 0;
+	border-bottom: 1px dashed #000;
+	line-height: 1.1em;
+	background-color: #D3E7F5;
+	height: 60px
+}
+
+ol.timeline li:first-child {
+	border-top: 1px dashed #000;
+}
+</style>
+
+</head>
+<body>
+
+	<div class="tab-pane active" id="monitor" style="display: block">
+		<br>
+		<h3 style="text-align: center;">
+			Real-time Server Monitor <span class="monitor" id="datehourval"></span>
+		</h3>
+		<div>
+			<hr />
+			<h3>
+				Total Request Hourly <span class="monitor" id="total-impression-1hour">0</span>
+			</h3>			
+			<hr />
+			<h3>
+				Total Request <span class="monitor" id="total-pageview">0</span>
+			</h3>
+
+		</div>
+	</div>
+
+	<ol id="update" class="timeline"></ol>
+
+</body>
+
+<script type="text/javascript">
+	(function() {
+		var Sock = function() {
+			var socket;
+			if (!window.WebSocket) {
+				window.WebSocket = window.MozWebSocket;
+			}
+
+			if (window.WebSocket) {
+				socket = new WebSocket(
+						"ws://127.0.0.1:9090/websocket?display=fullStatsChannel");
+				socket.onopen = onopen;
+				socket.onmessage = onmessage;
+				socket.onclose = onclose;
+			} else {
+				alert("Your browser does not support Web Socket.");
+			}
+
+			function onopen(event) {
+				console.log("Web Socket opened!");
+				window.addEventListener('unload', function() {
+					console.log("closing Web Socket !");
+					socket.close();
+				}, false);
+			}
+
+			function onmessage(event) {
+				websocketMonitorHandler(event.data);
+			}
+
+			function onclose(event) {
+				console.log("Web Socket closed");
+			}
+
+			function numberWithCommas(x) {
+				return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+			}
+
+			function websocketMonitorHandler(data) {
+				console.log("websocketMonitorHandler: \n " + data);
+				$("ol#update").prepend('<li>' + data + '</li>');
+				$("ol#update li:first").slideDown("slow");
+				if ($("ol#update li").size() > 5) {
+					$("ol#update li:last").remove();
+				}
+
+				var map = JSON.parse(data);
+				for ( var k in map) {
+					var node = document.getElementById(k);
+					if (node) {
+						if (k.indexOf('total') === 0)
+							node.innerHTML = numberWithCommas(map[k]);
+						else
+							node.innerHTML = map[k];
+					}
+
+				}
+			}
+		}
+		window.addEventListener('load', function() {
+			new Sock();
+		}, false);
+	})();
+</script>
+
+</html>

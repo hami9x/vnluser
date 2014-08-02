@@ -1,0 +1,2 @@
+#!/bin/sh
+java -jar -Xms256M -Xmx1048M -server -XX:+UseCompressedOops -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:+CMSScavengeBeforeRemark -XX:+DisableExplicitGC -Djava.awt.headless=true http-server.jar &
