@@ -1,6 +1,6 @@
 // Declare app level module which depends on filters, and services
 angular.module('vnluser', ['ngResource', 'ngRoute', 'ui.bootstrap', 'ui.date'])
-  .config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
+  .config(['$routeProvider', '$locationProvider', '$httpProvider', function ($routeProvider, $locationProvider, $httpProvider) {
     $routeProvider
       .when('/', {
         templateUrl: 'views/home/home.html', 
@@ -15,5 +15,7 @@ angular.module('vnluser', ['ngResource', 'ngRoute', 'ui.bootstrap', 'ui.date'])
         templateUrl: 'views/home/posts.html', 
         controller: 'PostsController'})
       // .otherwise({redirectTo: '/'});
+       $httpProvider.defaults.useXDomain = true;
+      delete $httpProvider.defaults.headers.common['X-Requested-With'];
       $locationProvider.html5Mode(true);
   }]);
