@@ -3,9 +3,12 @@ vnluser
 HackathonVietnam2014 contest
 =======
 
+== Documentation and ideas:
+https://github.com/phaikawl/vnluser/wiki
+
 == Project is 4 main components (self written in challenge):
 - Web interface, built from AngularJS
-- Browser exenstion for Chrome PC, to be supported Firefox Android
+- Browser exenstion for Chrome PC
 - Service API, built from flask (python micro-framework)
 - Data processing backend: python (NLP keywords suggest) + java (Recommendation)
 
@@ -20,5 +23,3 @@ HackathonVietnam2014 contest
 
 Please refer installation in each component folder.
 
-== Documentation and ideas:
-https://github.com/phaikawl/vnluser/wiki
