@@ -57,7 +57,6 @@ chrome.extension.onRequest.addListener(
 				} else {
 					jQuery('#keywords').html(ehtml + "," + guessedKeywords);
 				}
-				
 			};
 			//TODO improve tracking data
 			var trackingData = {url : request.url, referer : request.referer};
@@ -104,7 +103,7 @@ function addInfoNode(){
 	var currentDate = new Date();
 	var utcDate = new Date( currentDate.getUTCFullYear(), currentDate.getUTCMonth(), currentDate.getUTCDate(), currentDate.getUTCHours(), currentDate.getUTCMinutes(), currentDate.getUTCSeconds() );
 	var data = {
-		'content' : jQuery('#selected_html').html(),
+		'content' : jQuery('#selected_html').text(),
 		'title' : jQuery('#title').text() ? jQuery('#title').text() : '',
 		'link' : jQuery('#url').text() ? jQuery('#url').text() : '',
 		'keywords' : keywordsArr.length ? keywordsArr  : [],

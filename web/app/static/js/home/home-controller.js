@@ -26,7 +26,7 @@ angular.module('vnluser')
   .controller('HomeController', ['$scope', '$http', function ($scope, $http) {
 
     var popupClose = function() {
-        console.log('popup close');
+        location.reload();
     }
 
     $scope.loginPopup = function() {
@@ -69,14 +69,6 @@ angular.module('vnluser')
             post.unixtime = utcDate.getTime();
             delete post.post_id;
             delete post.dp_link;
-
-            $http.post(
-                url("/chk/save"),
-                post,
-                { withCredentials: true}
-            ).success(function(resp) {
-                console.log(resp);
-            });
         };
       }
     ])
