@@ -101,13 +101,15 @@ function addInfoNode(){
 	for (var i = 0; i < keywordsArr.length; i++) {
 		keywordsArr[i] = keywordsArr[i].trim();
 	}
-
+	var currentDate = new Date();
+	var utcDate = new Date( currentDate.getUTCFullYear(), currentDate.getUTCMonth(), currentDate.getUTCDate(), currentDate.getUTCHours(), currentDate.getUTCMinutes(), currentDate.getUTCSeconds() );
 	var data = {
 		'content' : jQuery('#selected_html').html(),
 		'title' : jQuery('#title').text() ? jQuery('#title').text() : '',
 		'link' : jQuery('#url').text() ? jQuery('#url').text() : '',
 		'keywords' : keywordsArr.length ? keywordsArr  : [],
-		'private' : jQuery('#private').is(':checked') ? true : false
+		'private' : jQuery('#private').is(':checked') ? true : false,
+		'unixtime': utcDate.getTime()
 	};
 	
 

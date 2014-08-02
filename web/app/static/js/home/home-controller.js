@@ -1,14 +1,28 @@
 'use strict';
 
 var API_URL = 'http://m.chk.vn:5000';
+var APP_KEY = 'fsdlsyzqfzmzf05';
 
 function url(path) {
     return API_URL + path;
 }
 
+function getContents(http, data) {
+    for (var i in data) {
+        data[i].content = "";
+        if (data[i].dp_link != "") {
+            http.get(data[i].dp_link).success(function(d) {
+                data[i].content = $(d.content).text();
+            });
+        }
+    }
+
+    return data;
+}
 
 angular.module('vnluser')
   .controller('HomeController', ['$scope', '$http', function ($scope, $http) {
+
     var popupClose = function() {
         console.log('popup close');
     }
@@ -25,8 +39,12 @@ angular.module('vnluser')
         if (data.status == "forbidden") {
             $scope.needslogin = true;
             $scope.loginurl = data.login_url;
+        } else {
+            window.location = "https://st.chk.vn/dashboard";
         }
     });
+
+    $scope.tabid = 'home';
   }])
   .controller('DropboxController', ['$scope', '$http', function ($scope, $http) {
     var params = location.search
@@ -37,29 +55,37 @@ angular.module('vnluser')
   }])
     .controller('DashboardController', ['$scope', '$http',
       function ($scope, $http) {
-        $scope.posts = [
-            {
-                username: 'Hai Thanh Nguyen',
-                title: 'Some title',
-                content: 'Sed ut perspiciatis unde omnis iste natus.',
-                keywords: ['wade.go', 'programming'],
-                ncomments: 100,
-                date: "1/4/2014",
-            },
-        ]
+        $scope.tabid = "dashboard";
+        $scope.cshow = [];
+        $scope.posts = $http.get(url('/lists/public_post'), {withCredentials: true}).success(function(data) {
+            $scope.posts = getContents($http, data);
+        });
+        $scope.repub = function(index) {
+            var post = $scope.posts[index];
+            var currentDate = new Date();
+            var utcDate = new Date( currentDate.getUTCFullYear(), currentDate.getUTCMonth(), currentDate.getUTCDate(), currentDate.getUTCHours(), currentDate.getUTCMinutes(), currentDate.getUTCSeconds());
+            post.unixtime = utcDate.getTime();
+            delete post.post_id;
+            delete post.dp_link;
+
+            console.log(post);
+
+            $http.post(
+                url("/chk/save"),
+                post,
+                { withCredentials: true}
+            ).success(function(resp) {
+                console.log(resp);
+            });
+        };
       }
     ])
-    .controller('ProfileController', ['$scope', '$http',
+    .controller('PostsController', ['$scope', '$http',
       function ($scope, $http) {
-        $scope.posts = [
-            {
-                username: 'Le Kien Truc',
-                title: 'Some title',
-                content: 'zzzzzzzzzzzzzzzzzz',
-                keywords: ['programming', 'SocialMedia'],
-                ncomments: 10,
-                date: "1/3/2014",
-            },
-        ]
+        $scope.tabid = "posts";
+        $http.get(url('/lists/post'), {withCredentials: true}).success(function(data) {
+            $scope.posts = getContents($http, data);
+        });
       }
     ]);
+

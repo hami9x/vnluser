@@ -20,7 +20,7 @@
          <span class="icon-bar"></span>
          <span class="icon-bar"></span>
        </button>
-       <a class="navbar-brand" href="#">Hashpipe</a>
+       <a class="navbar-brand" href="/">Hashpipe</a>
      </div>
 
      <!-- Collect the nav links, forms, and other content for toggling -->
@@ -33,7 +33,13 @@
    </div>
    <!-- /.container -->
   </nav>
-  <div class="container" ng-view></div>
+
+  <section style="background:#efefe9;">
+    <div class="container-fluid" ng-view>
+    </div>
+  </section>
+
+  <script src="https://www.dropbox.com/static/api/dropbox-datastores-1.1-latest.js" type="text/javascript"></script>
   <script src="lib/jquery/dist/jquery.js"></script>
   <script src="lib/jquery-ui/jquery-ui.js"></script>
   <script src="lib/lodash/dist/lodash.js"></script>
