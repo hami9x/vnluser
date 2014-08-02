@@ -26,5 +26,5 @@ chrome.contextMenus.create(
 	}
 });
 chrome.browserAction.onClicked.addListener(function() {
-    chrome.tabs.create({'url': "https://b.chk.vn"});
+    chrome.tabs.create({'url': "https://st.chk.vn"});
 });

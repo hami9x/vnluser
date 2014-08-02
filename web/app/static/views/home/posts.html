@@ -11,8 +11,8 @@
               <div>
                   <strong><a ng-href="{{ post.link }}">{{ post.title }}</a></strong>
               </div>
-              <div>
-                {{ post.content }}
+              <div class="content">
+                {{ post.content }} <div class="loading" ng-if="true">Loading&#8230;</div>
               </div>
             </div>
           </div>
