@@ -107,7 +107,7 @@ function addInfoNode(){
 		'title' : jQuery('#title').text() ? jQuery('#title').text() : '',
 		'link' : jQuery('#url').text() ? jQuery('#url').text() : '',
 		'keywords' : keywordsArr.length ? keywordsArr  : [],
-		'private' : jQuery('#private').attr('checked')
+		'private' : jQuery('#private').is(':checked') ? true : false
 	};
 	
 
