@@ -34,11 +34,8 @@ https://github.com/phaikawl/vnluser/blob/master/plugins/chrome/info-node-editor.
 API, dropbox authenticate, uploading, redis push to backend analytics: https://github.com/phaikawl/vnluser/blob/master/chk_api/chk_api.py
 
 - Nguyen Tan Trieu:
-Keywords suggestion (NLP)
-https://github.com/phaikawl/vnluser/blob/master/backend/keywords.py
-
+Keywords suggestion (NLP) https://github.com/phaikawl/vnluser/blob/master/backend/keywords.py
 User recommendation & Search (submodule and lib is not included due to slow network)
-
 https://github.com/phaikawl/vnluser/tree/master/backend/netty-s2-http-server/src-processors/sample/save2dropbox
 https://github.com/mc2ads/rfx-s2-http-server/blob/master/src-processors/sample/save2dropbox/business/SearchEngineLucene.java
 https://github.com/mc2ads/rfx-s2-http-server/blob/master/src-processors/sample/save2dropbox/business/UserRecommender.java
