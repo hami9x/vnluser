@@ -21,7 +21,7 @@ var LOGIN_URL = baseUrl + '/login';
 var SAVE_URL = baseUrl + '/save';
 var logged = false;
 var APP_KEY = 'fsdlsyzqfzmzf05';
-var client = new Dropbox.Client({key: APP_KEY});
+
 //var baseUrl = 'http://localhost/i2tree-framework/front-end/index.php';
 // var statusUrl = baseUrl + '/cloud_storage/check_status';
 
@@ -104,17 +104,17 @@ function addInfoNode(){
 	for (var i = 0; i < keywordsArr.length; i++) {
 		keywordsArr[i] = keywordsArr[i].trim();
 	}
-	var share_to_other = jQuery('#share_to_other').attr('checked')
+
 	var data = {
 		content : jQuery('#selected_html').html(),
 		title : jQuery('#title').text() ? jQuery('#title').text() : '',
 		link : jQuery('#url').text() ? jQuery('#url').text() : '',
-		keywords : keywordsArr.length ? keywordsArr  : []
+		keywords : keywordsArr.length ? keywordsArr  : [],
+		private : jQuery('#private').attr('checked')
 	};
 	
 
 	if (logged) {
-		if (share_to_other) {
 			jQuery.ajax({
 				type: 'POST',
 				url: SAVE_URL,
@@ -125,27 +125,6 @@ function addInfoNode(){
 			.fail(function() {
 				jQuery('.alert-danger').append('<p>Error connect to server. Please try later !</p>').show();
 			});
-		} else {
-
-			// Try to finish OAuth authorization.
-			client.authenticate({interactive: true}, function (error) {
-			    if (error) {
-			        alert('Authentication error: ' + error);
-			    }
-			});
-
-			if (client.isAuthenticated()) {
-			    // Client is authenticated. Display UI.
-			    var datastoreManager = client.getDatastoreManager();
-					datastoreManager.openDefaultDatastore(function (error, datastore) {
-					    if (error) {
-					        alert('Error opening default datastore: ' + error);
-					    }
-					    var taskTable = datastore.getTable('h-save');
-					    var firstTask = taskTable.insert(data);
-					});
-			}
-		}
 	}
 	// jQuery.post(baseUrl + '/cloud_storage/add_info_node',data, f);
 }
