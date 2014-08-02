@@ -37,15 +37,15 @@ API, dropbox authenticate, uploading, redis push to backend analytics: https://g
 Keywords suggestion (NLP) https://github.com/phaikawl/vnluser/blob/master/backend/keywords.py
 User recommendation & Search (submodule and lib is not included due to slow network)
 https://github.com/phaikawl/vnluser/tree/master/backend/netty-s2-http-server/src-processors/sample/save2dropbox
-https://github.com/mc2ads/rfx-s2-http-server/blob/master/src-processors/sample/save2dropbox/business/SearchEngineLucene.java
-https://github.com/mc2ads/rfx-s2-http-server/blob/master/src-processors/sample/save2dropbox/business/UserRecommender.java
+https://github.com/phaikawl/vnluser/blob/master/backend/netty-s2-http-server/src-processors/sample/save2dropbox/business/SearchEngineLucene.java
+https://github.com/phaikawl/vnluser/blob/master/backend/netty-s2-http-server/src-processors/sample/save2dropbox/business/UserRecommender.java
 
 # Other services:
 
 - Dropbox: User authentication + User data storage + Meta data.
 - Redis: Message queue, data stucture storage (for fastest development). In future, migration to apache-kafka (queue) and mongoDB / Google LevelDB (data storage) for scaling and performance.
-- Recommendation: lucene, orientDB
-- rfx framework https://github.com/mc2ads/rfx-s2-http-server . Reactive Small and Scalable HTTP Server for real-time big data processing
+- Recommendation: Apache Lucene, OrientDB
+- rfx framework https://github.com/mc2ads/rfx-s2-http-server . Reactive Small and Scalable HTTP Server for real-time event processing
 
 # Installation guilde:
 
@@ -63,6 +63,7 @@ The strong point of this architecture is scalibility. Each component could be sc
 - User shall be able to list their saved items and view later.
 - User shall be able to views other public saved items and recommendations. 
 - User shall be able to saved other public items and recommendations.
+- Organizing information (keywords, category, folder) using machine learning (Virtual Personal Information Assistant)
 
 # Todo:
 
