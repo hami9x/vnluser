@@ -9,7 +9,6 @@ body {
 .board{
     width: 75%;
 margin: 60px auto;
-height: 500px;
 background: #fff;
 /*box-shadow: 10px 10px #ccc,-10px 20px #ddd;*/
 }
@@ -238,3 +237,8 @@ left: 35%;
 .widget .action { margin-top:5px; }
 .widget .comment-text { font-size: 12px; }
 .widget .btn-block { border-top-left-radius:0px;border-top-right-radius:0px; }
+
+
+.post {
+    margin: 30px;
+}

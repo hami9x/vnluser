@@ -14,9 +14,6 @@ angular.module('vnluser', ['ngResource', 'ngRoute', 'ui.bootstrap', 'ui.date'])
       .when('/posts', {
         templateUrl: 'views/home/posts.html', 
         controller: 'PostsController'})
-      .when('/storage', {
-        templateUrl: 'views/home/storage.html', 
-        controller: 'StorageViewController'});
       // .otherwise({redirectTo: '/'});
       $locationProvider.html5Mode(true);
   }]);

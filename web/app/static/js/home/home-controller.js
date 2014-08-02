@@ -7,13 +7,24 @@ function url(path) {
     return API_URL + path;
 }
 
+function getContents(http, data) {
+    for (var i in data) {
+        data[i].content = "";
+        if (data[i].dp_link != "") {
+            http.get(data[i].dp_link).success(function(d) {
+                data[i].content = $(d.content).text();
+            });
+        }
+    }
+
+    return data;
+}
 
 angular.module('vnluser')
   .controller('HomeController', ['$scope', '$http', function ($scope, $http) {
 
     var popupClose = function() {
         console.log('popup close');
-        window.location = "https://st.chk.vn/dashboard";
     }
 
     $scope.loginPopup = function() {
@@ -46,75 +57,35 @@ angular.module('vnluser')
       function ($scope, $http) {
         $scope.tabid = "dashboard";
         $scope.cshow = [];
-        $scope.genComments = function(){
-            var a = [];
-            var rand = function() {
-                var str = '';
-                for (var j=0; j<Math.floor(Math.random()*3); j++) {
-                    str += String.fromCharCode(Math.floor(Math.random()*20));
-                }
-                return str;
-            }
+        $scope.posts = $http.get(url('/lists/public_post'), {withCredentials: true}).success(function(data) {
+            $scope.posts = getContents($http, data);
+        });
+        $scope.repub = function(index) {
+            var post = $scope.posts[index];
+            var currentDate = new Date();
+            var utcDate = new Date( currentDate.getUTCFullYear(), currentDate.getUTCMonth(), currentDate.getUTCDate(), currentDate.getUTCHours(), currentDate.getUTCMinutes(), currentDate.getUTCSeconds());
+            post.unixtime = utcDate.getTime();
+            delete post.post_id;
+            delete post.dp_link;
 
-            for (var i=0; i<Math.floor(Math.random()*3); i++) {
-                a.push({content: "kkdf", author: "kdkf"});
-            }
+            console.log(post);
 
-            return a;
-        }
-        $scope.posts = [
-            {
-                username: 'Hai Thanh Nguyen',
-                title: 'Some title',
-                content: 'Sed ut perspiciatis unde omnis iste natus.',
-                keywords: ['wade.go', 'programming'],
-                ncomments: 100,
-                date: "1/4/2014",
-            },
-        ]
+            $http.post(
+                url("/chk/save"),
+                post,
+                { withCredentials: true}
+            ).success(function(resp) {
+                console.log(resp);
+            });
+        };
       }
     ])
     .controller('PostsController', ['$scope', '$http',
       function ($scope, $http) {
         $scope.tabid = "posts";
-        // $scope.posts = [
-        //     {
-        //         title: 'Some title',
-        //         content: 'zzzzzzzzzzzzzzzzzz',
-        //         keywords: ['programming', 'SocialMedia'],
-        //         ncomments: 10,
-        //         date: "1/3/2014",
-        //     },
-        // ]
         $http.get(url('/lists/post'), {withCredentials: true}).success(function(data) {
-            $scope.posts = data;
+            $scope.posts = getContents($http, data);
         });
-      }
-    ])
-    .controller('StorageViewController', ['$scope', '$http',
-      function ($scope, $http) {
-        $scope.tabid = 'storage';
-
-        var client = new Dropbox.Client({key: APP_KEY});
-
-        // Try to finish OAuth authorization.
-        client.authenticate({interactive: false}, function (error) {
-            if (error) {
-                alert('Authentication error: ' + error);
-            }
-        });
-
-        if (client.isAuthenticated()) {
-            var datastoreManager = client.getDatastoreManager();
-            datastoreManager.openDefaultDatastore(function (error, datastore) {
-                if (error) {
-                    alert('Error opening default datastore: ' + error);
-                }
-
-                var table = datastore.getTable('h-saves');
-                $scope.posts = table.query();
-
-            });
-        }
       }
     ]);
+
