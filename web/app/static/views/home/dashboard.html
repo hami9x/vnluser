@@ -31,7 +31,7 @@
                     <i class="icon-comment"></i> <a href="#" ng-click="cshow[$index] = !cshow[$index]">{{ post.ncomments }} Comments</a>
                     <div><i class="icon-tags"></i> Keywords:
                       <span ng-repeat="kw in post.keywords track by $index">
-                        <a href="#"><span class="label label-info">{{ kw }}</span></a> 
+                        <span><span class="label label-info">{{ kw }}</span></span> 
                       </span>
                     </div>
                   </p>

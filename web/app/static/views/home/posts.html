@@ -11,10 +11,9 @@
               <div>
                   <strong><a ng-href="{{ post.link }}">{{ post.title }}</a></strong>
               </div>
-              <!--<div>
-                <p></p>
-                <a href="#">Read more</a>
-              </div>-->
+              <div>
+                {{ post.content }}
+              </div>
             </div>
           </div>
           <div class="row">
@@ -23,7 +22,7 @@
                   <p>
                     <div><i class="icon-tags"></i> Keywords:
                     <span ng-repeat="kw in post.keywords track by $index">
-                      <a href="#"><span class="label label-info">{{ kw }}</span></a> 
+                      <span><span class="label label-info">{{ kw }}</span></span> 
                     </span>
                     </div>
                   </p>

@@ -11,9 +11,11 @@ function getContents(http, data) {
     for (var i in data) {
         data[i].content = "";
         if (data[i].dp_link != "") {
-            http.get(data[i].dp_link).success(function(d) {
-                data[i].content = $(d.content).text();
-            });
+            http.get(data[i].dp_link).success((function(i) {
+                return function(d) {
+                    data[i].content = $('<div>'+d.content+'</div>').text();
+                };
+            })(i));
         }
     }
 
@@ -57,7 +59,7 @@ angular.module('vnluser')
       function ($scope, $http) {
         $scope.tabid = "dashboard";
         $scope.cshow = [];
-        $scope.posts = $http.get(url('/lists/public_post'), {withCredentials: true}).success(function(data) {
+        $scope.posts = $http.get(url('/lists/recommendation'), {withCredentials: true}).success(function(data) {
             $scope.posts = getContents($http, data);
         });
         $scope.repub = function(index) {
@@ -67,8 +69,6 @@ angular.module('vnluser')
             post.unixtime = utcDate.getTime();
             delete post.post_id;
             delete post.dp_link;
-
-            console.log(post);
 
             $http.post(
                 url("/chk/save"),
