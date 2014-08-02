@@ -20,10 +20,7 @@ var baseUrl = 'http://m.chk.vn:5000/chk';
 var LOGIN_URL = baseUrl + '/login';
 var SAVE_URL = baseUrl + '/save';
 var logged = false;
-var APP_KEY = 'fsdlsyzqfzmzf05';
 
-//var baseUrl = 'http://localhost/i2tree-framework/front-end/index.php';
-// var statusUrl = baseUrl + '/cloud_storage/check_status';
 
 function checkLogin(){
 	jQuery.get(LOGIN_URL,{}, function(rs) {
@@ -106,11 +103,11 @@ function addInfoNode(){
 	}
 
 	var data = {
-		content : jQuery('#selected_html').html(),
-		title : jQuery('#title').text() ? jQuery('#title').text() : '',
-		link : jQuery('#url').text() ? jQuery('#url').text() : '',
-		keywords : keywordsArr.length ? keywordsArr  : [],
-		private : jQuery('#private').attr('checked')
+		'content' : jQuery('#selected_html').html(),
+		'title' : jQuery('#title').text() ? jQuery('#title').text() : '',
+		'link' : jQuery('#url').text() ? jQuery('#url').text() : '',
+		'keywords' : keywordsArr.length ? keywordsArr  : [],
+		'private' : jQuery('#private').attr('checked')
 	};
 	
 
