@@ -53,7 +53,8 @@ Please refer installation in each component folder.
 
 # Architecture:
 
-https://farm4.staticflickr.com/3836/14805014945_595ce71fe7_o.png
+
+![alt tag](http://dl.dropboxusercontent.com/u/4074962/icons/save2mycloud.png)
 
 The strong point of this architecture is scalibility. Each component could be scale individually. API call via message queue could be use for load balancing/ data sharding / asynchronous calling.
 
