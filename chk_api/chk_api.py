@@ -11,7 +11,6 @@ import redis
 import urllib
 
 app = Flask(__name__)
-#api = restful.Api(app)
 
 
 #TODO: add configuration layer for secret data
@@ -31,7 +30,6 @@ def get_auth_flow():
     return dropbox.client.DropboxOAuth2Flow(DROPBOX_APP_KEY, DROPBOX_APP_SECRET, redirect_uri, 
         session, "dropbox-auth-csrf-token")
 
-#flow = dropbox.client.DropboxOAuth2FlowNoRedirect(DROPBOX_APP_KEY, DROPBOX_APP_SECRET)
 flow = get_auth_flow() 
 
 def jd(res):
@@ -48,25 +46,42 @@ def is_login():
     else:
         return False
 
+"""
+check user login, if not login. start authentication flow
+"""
 @app.route("/chk/login")
 def check_login():
     if "db_user_id" in session:
         return jd({"status":"ok","db_user_id":session["db_user_id"]})
     else:
         return jd({"status":"forbidden","login_url":flow.start()})
-
+"""
+get new post id by redis incr method
+"""
 def get_post_id():
     r = get_redis()
     return r.incr(R_POST_ID)
 
+"""
+get post file name in dropbox by title and post_id
+"""
 def get_file_name(title, post_id):
     return str() + "_" + unidecode(urllib.quote(title.replace(" ","_")) + ".html") 
 
+"""
+create tempfile in memory without write to harddisk
+TODO: Check ram leak???
+"""
 def create_file(req_json):
     tf = StringIO.StringIO()
     tf.write(json.dumps(req_json))
     return tf
 
+"""
+Save posts into redis and data structure
+If post is private, won't send it to data processing
+If post is public get dropbox share link back and saved to public place.
+"""
 @app.route("/chk/save", methods=['POST'])
 def chk_save():
     if "access_token" not in session: 
@@ -82,26 +97,37 @@ def chk_save():
     req_json["user_id"] = session["db_user_id"]
     req_json["post_id"] = post_id
     keywords = req_json["keywords"]
-    dp_link = client.share(filename,short_url=False)
-    dp_link = dp_link["url"].replace('www.dropbox.com', 'dl.dropboxusercontent.com', 1)
+    private = True if "private" in req_json else False
+    
+    if private:
+        dp_link = client.share(filename,short_url=False)
+        dp_link = dp_link["url"].replace('www.dropbox.com', 'dl.dropboxusercontent.com', 1)
+    else:
+        dp_link = ""
+
     link = req_json["link"]
     user_id = session["db_user_id"]
+
     stored_json = {"post_id": post_id, "title":title, "keywords":keywords, "dp_link": dp_link, "link": link}
-    #Queue, will be replaced by kafka
-    r.lpush(R_ITEMS, json.dumps(stored_json))
-    
-    #Latest 100 posts
-    r.lpush(R_PUBLIC_POST, json.dumps(stored_json))
-    r.ltrim(R_PUBLIC_POST, 0, 5000)
-    
     #Store user posts 
     r.hset(R_USER + ":" + str(user_id),  R_POST + ":" + str(post_id), json.dumps(stored_json))
     #Store sorted set of post_id
     r.zadd(R_ZUSER + ":" + str(user_id), str(post_id), str(post_id))
+   
+    if not private:
+        #Analytics queue, will be replaced by kafka
+        r.lpush(R_ITEMS, json.dumps(stored_json))
+        
+        #Latest 100 posts
+        r.lpush(R_PUBLIC_POST, json.dumps(stored_json))
+        r.ltrim(R_PUBLIC_POST, 0, 5000)
     return jd({"status":"succeed"})
 
 
-
+"""
+Check user login status
+If not start dropbox authentication
+"""
 @app.route("/auth/login")
 def auth_login():
     try:
@@ -113,11 +139,17 @@ def auth_login():
         session["db_user_id"] = user_id
         return jd({"status":"login_succeed","url_state":url_state,"user_id":user_id,"access_token":access_token})
 
+"""
+Invalidate session to logout
+"""
 @app.route("/auth/logout")
 def auth_logout():
     session.clear()
     return jd({"status":"logout_succeed"})
 
+"""
+List private saved posts of user
+"""
 @app.route("/lists/post")
 def lists_post():
     limit = request.args.get('limit') if request.args.get('limit') else 10
@@ -126,10 +158,17 @@ def lists_post():
     list_post = r.zrevrangebyscore(R_ZUSER + ":" + session["db_user_id"], "+inf", "-inf", start=offset, num=limit)
     res = []
     r = get_redis()
+    client = dropbox.client.DropboxClient(session["access_token"])
     for post_id in list_post:
-        res.append(json.loads(r.hget(R_USER + ":" + str(session["db_user_id"]), R_POST + ":" + str(post_id))))
+        post = json.loads(r.hget(R_USER + ":" + str(session["db_user_id"]), R_POST + ":" + str(post_id)))
+        post["dp_link"] =  client.media(get_file_name(post["title"], post["post_id"]))["url"]
+        res.append(post)
     return jd(res)
 
+
+"""
+Get latest saved posts
+"""
 @app.route("/lists/public_post")
 def lists_public():
     limit = request.args.get('limit') if request.args.get('limit') else 10
@@ -142,6 +181,10 @@ def lists_public():
         res.append(json.loads(post))
     return jd(res)
 
+"""
+Get recommendation for user
+User need login to get recommendation
+"""
 @app.route("/lists/recommendation")
 def lists_recommendation():
     limit = 10
@@ -161,4 +204,4 @@ def lists_recommendation():
 """
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', debug=True, ssl_context="adhoc")
+    app.run(host='0.0.0.0', debug=True)
