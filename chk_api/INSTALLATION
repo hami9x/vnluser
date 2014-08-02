@@ -1,0 +1,14 @@
+===
+Environment
+===
+
+Tested on ubuntu 14.04
+Python 2.7
+Dependencies:
+
+pip install
+flask, unidecode, redis-py, urllib
+
+Python dropbox SDK installation https://www.dropbox.com/developers/core/sdks/python
+
+Fill request configuration keys
