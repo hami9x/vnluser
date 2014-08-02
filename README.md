@@ -13,7 +13,7 @@ https://github.com/phaikawl/vnluser/wiki
 - Connecting people with the same interesting by recommendation.
 - The final goal is a knowledge social network.
 
-# Project is 4 main components (self written in challenge):
+# Project is 4 main components (23 hours hackathon):
 
 - Web interface, built from AngularJS
 - Browser extension for Chrome PC.
